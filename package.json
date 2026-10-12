@@ -1,0 +1,31 @@
+{
+  "name": "subscriber-usage-service",
+  "version": "1.0.0",
+  "description": "Subscriber Usage API, Snapshot Automation, SQL Queries, and Troubleshooting Solution",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "snapshot": "node scripts/take_snapshot.js",
+    "cron": "node scripts/snapshot_cron.js",
+    "cleanup": "node scripts/cleanup_snapshots.js",
+    "sql": "node scripts/run_sql.js",
+    "verify:q4": "node scripts/verify_q4.js",
+    "test": "node tests/api.test.js"
+  },
+  "keywords": [
+    "subscriber",
+    "telecom",
+    "usage-api",
+    "automation",
+    "cron",
+    "sql"
+  ],
+  "author": "Engineering Candidate",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3"
+  }
+}
