@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscriber Usage Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">Telecom Usage Operations</h1>
+          <p class="brand-subtitle">Subscriber Usage API & Automated Snapshot Platform</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="status-pill online">
+          <span class="status-dot"></span> API Online (In-Memory)
+        </span>
+        <button id="btnTriggerSnapshot" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Export CSV Snapshot
+        </button>
+        <button id="btnOpenModal" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Record Usage
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Top Stats / Metric Cards -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon icon-blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Total Call Minutes</div>
+          <div class="stat-value" id="statCallMinutes">--</div>
+          <div class="stat-sub">Across all snapshot records</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon icon-purple">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Total SMS Count</div>
+          <div class="stat-value" id="statSmsCount">--</div>
+          <div class="stat-sub">Delivered subscriber messages</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon icon-emerald">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Total Data Consumption</div>
+          <div class="stat-value" id="statDataUsage">--</div>
+          <div class="stat-sub" id="statDataGb">-- GB consumed</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon icon-amber">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">Active Subscribers</div>
+          <div class="stat-value" id="statSubscribers">--</div>
+          <div class="stat-sub" id="statTotalRecords">-- total records recorded</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs Navigation -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-usage">
+        📋 Subscriber Usage Records
+      </button>
+      <button class="tab-btn" data-tab="tab-subscribers">
+        👥 Subscriber Directory
+      </button>
+      <button class="tab-btn" data-tab="tab-automation">
+        ⏰ Q2: Snapshot & Cron
+      </button>
+      <button class="tab-btn" data-tab="tab-sql">
+        ⚡ Q3: SQL Solutions
+      </button>
+      <button class="tab-btn" data-tab="tab-q4">
+        🐛 Q4: Code Troubleshooting
+      </button>
+    </div>
+
+    <!-- TAB 1: USAGE RECORDS -->
+    <section id="tab-usage" class="tab-panel active">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Recorded Usage Entries</h2>
+          <p class="panel-subtitle">Real-time usage captured via REST API (Q1)</p>
+        </div>
+        <div class="table-controls">
+          <div class="search-input-wrapper">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="filterInput" placeholder="Filter by subscriber ID...">
+          </div>
+          <button id="btnReloadUsage" class="btn btn-outline" title="Refresh list">
+            🔄 Refresh
+          </button>
+          <button id="btnResetData" class="btn btn-outline btn-danger-outline" title="Reset to initial test seed data">
+            ↺ Reset Seed
+          </button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Subscriber</th>
+              <th>Plan</th>
+              <th>Call Minutes</th>
+              <th>SMS Count</th>
+              <th>Data Usage</th>
+              <th>Recorded Timestamp (WIB)</th>
+            </tr>
+          </thead>
+          <tbody id="usageTableBody">
+            <tr>
+              <td colspan="7" class="loading-state">Loading usage records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: SUBSCRIBERS DIRECTORY -->
+    <section id="tab-subscribers" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Subscribers Reference Directory</h2>
+          <p class="panel-subtitle">Active accounts and plan subscriptions</p>
+        </div>
+      </div>
+      <div class="subscribers-grid" id="subscribersList">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 3: Q2 AUTOMATION & SNAPSHOTS -->
+    <section id="tab-automation" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Q2: Usage Snapshot Automation</h2>
+          <p class="panel-subtitle">Automated CSV export 3 times daily at 08:00, 12:00, 15:00 WIB and 30-day retention cleanup</p>
+        </div>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-title">🕒 Cron Job Specification</div>
+          <p class="text-muted">The snapshot task is scheduled 3 times daily in Western Indonesia Time (WIB / UTC+7).</p>
+          
+          <div class="code-box">
+            <div class="code-box-header">Crontab Expression (Local Server in WIB)</div>
+            <pre><code>0 8,12,15 * * * /usr/bin/node /path/to/Huawei/scripts/take_snapshot.js</code></pre>
+          </div>
+
+          <div class="code-box" style="margin-top: 12px;">
+            <div class="code-box-header">Crontab Expression (Server configured in UTC)</div>
+            <pre><code>0 1,5,8 * * * /usr/bin/node /path/to/Huawei/scripts/take_snapshot.js</code></pre>
+          </div>
+
+          <div class="info-badge">
+            <strong>Naming Convention:</strong> <code>usage_snapshot_YYYYMMDD_HHmmss_WIB.csv</code><br>
+            <em>Example:</em> <code>usage_snapshot_20261012_080000_WIB.csv</code>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🧹 Automated Cleanup Routine</div>
+          <p class="text-muted">Retains snapshots within a 30-day window and automatically purges older CSV files to preserve disk space.</p>
+          
+          <div class="code-box">
+            <div class="code-box-header">Run Cleanup Script</div>
+            <pre><code># Check what would be removed safely (dry-run):
+node scripts/cleanup_snapshots.js --dry-run
+
+# Run actual cleanup:
+node scripts/cleanup_snapshots.js</code></pre>
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 12px;">
+            <button id="btnManualSnapshot" class="btn btn-primary" style="flex: 1;">
+              ⚡ Trigger Snapshot Now
+            </button>
+            <button id="btnSimulateCleanup" class="btn btn-outline" style="flex: 1;">
+              🔍 Test Cleanup Logic
+            </button>
+          </div>
+          <div id="automationFeedback" class="feedback-banner" style="display: none; margin-top: 14px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: Q3 SQL SOLUTIONS -->
+    <section id="tab-sql" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Q3: Subscriber & Usage SQL Queries</h2>
+          <p class="panel-subtitle">Clean, verified relational queries with full explanations</p>
+        </div>
+        <button id="btnRunSqlLive" class="btn btn-secondary">
+          ▶ Execute All 5 SQL Queries
+        </button>
+      </div>
+
+      <div class="sql-accordion" id="sqlQueriesContainer">
+        <!-- Will be rendered dynamically or statically -->
+      </div>
+    </section>
+
+    <!-- TAB 5: Q4 TROUBLESHOOT & EXPLAIN -->
+    <section id="tab-q4" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Q4: Troubleshooting the JavaScript Reducer</h2>
+          <p class="panel-subtitle">Root cause analysis, working solution, and defensive coding best practices</p>
+        </div>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card card-danger-border">
+          <div class="card-title text-danger">❌ The Buggy Code</div>
+          <pre class="code-snippet"><code>function getTotalUsageMB(records) {
+  return records.reduce((total, record) => {
+    total += record.dataUsageMB;
+  });
+}</code></pre>
+
+          <div class="explanation-box">
+            <h4>Why It Breaks:</h4>
+            <ul>
+              <li><strong>No return in arrow body:</strong> The arrow callback uses curly braces <code>{ ... }</code> without an explicit <code>return</code> statement. It returns <code>undefined</code> on iteration 2, making <code>total = NaN</code>.</li>
+              <li><strong>Missing initial value <code>0</code>:</strong> Without an initial accumulator, <code>reduce()</code> starts with the first object <code>{ subscriberId: 'SUB01', ... }</code> as <code>total</code>, resulting in string coercion <code>"[object Object]1200"</code>, and crashes with <code>TypeError</code> if given an empty array <code>[]</code>!</li>
+            </ul>
+          </div>
+
+          <button id="btnTestBuggy" class="btn btn-outline btn-danger-outline" style="width: 100%; margin-top: 14px;">
+            Run Buggy Code (See Output)
+          </button>
+          <div id="buggyOutput" class="test-result-box" style="display:none;"></div>
+        </div>
+
+        <div class="card card-success-border">
+          <div class="card-title text-success">✅ The Fixed Solution</div>
+          <pre class="code-snippet"><code>function getTotalUsageMB(records) {
+  if (!Array.isArray(records)) return 0;
+  return records.reduce((total, record) => {
+    return total + ((record && record.dataUsageMB) || 0);
+  }, 0);
+}
+
+// Or clean 1-liner:
+const getTotalUsageMB = (records = []) =>
+  records.reduce((acc, r) => acc + (r?.dataUsageMB || 0), 0);</code></pre>
+
+          <div class="explanation-box">
+            <h4>How to Prevent in the Future:</h4>
+            <ul>
+              <li><strong>ESLint Rules:</strong> Enable <code>array-callback-return</code> to catch missing returns in reduce/map at build time.</li>
+              <li><strong>TypeScript:</strong> Static types immediately warn that <code>total</code> returns <code>void</code> instead of <code>number</code>.</li>
+              <li><strong>Unit Testing:</strong> Always test edge cases (empty list <code>[]</code>, single item, null items).</li>
+            </ul>
+          </div>
+
+          <button id="btnTestFixed" class="btn btn-primary" style="width: 100%; margin-top: 14px;">
+            Run Fixed Code (See Output)
+          </button>
+          <div id="fixedOutput" class="test-result-box" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: Record Usage -->
+  <div id="recordModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Subscriber Usage</h3>
+        <button id="btnCloseModal" class="btn-close">&times;</button>
+      </div>
+      <form id="usageForm">
+        <div class="form-group">
+          <label for="subscriberIdInput">Subscriber</label>
+          <div style="display: flex; gap: 8px;">
+            <select id="subscriberSelect" class="form-control">
+              <option value="SUB01">SUB01 - Amir (Basic)</option>
+              <option value="SUB02">SUB02 - Sari (Premium)</option>
+              <option value="SUB03">SUB03 - Budi (Basic)</option>
+              <option value="SUB04">SUB04 - Dewi (Family)</option>
+              <option value="SUB05">SUB05 - Rian (Premium)</option>
+              <option value="SUB06">SUB06 - Nia (Basic)</option>
+              <option value="CUSTOM">Custom ID...</option>
+            </select>
+            <input type="text" id="subscriberCustomInput" class="form-control" placeholder="e.g. SUB07" style="display: none; width: 140px;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="callMinutesInput">Call Minutes</label>
+          <input type="number" id="callMinutesInput" class="form-control" placeholder="e.g. 45" min="0" step="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="smsCountInput">SMS Count</label>
+          <input type="number" id="smsCountInput" class="form-control" placeholder="e.g. 15" min="0" step="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="dataUsageMBInput">Data Usage (MB)</label>
+          <input type="number" id="dataUsageMBInput" class="form-control" placeholder="e.g. 2048" min="0" step="1" required>
+        </div>
+
+        <div id="formError" class="form-error-msg" style="display: none;"></div>
+
+        <div class="modal-footer">
+          <button type="button" id="btnCancelModal" class="btn btn-outline">Cancel</button>
+          <button type="submit" id="btnSubmitUsage" class="btn btn-primary">Save Usage Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
